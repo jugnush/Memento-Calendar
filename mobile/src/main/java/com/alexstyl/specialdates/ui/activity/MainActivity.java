@@ -1,11 +1,13 @@
 package com.alexstyl.specialdates.ui.activity;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 
 import com.alexstyl.specialdates.ExternalNavigator;
 import com.alexstyl.specialdates.R;
@@ -13,6 +15,7 @@ import com.alexstyl.specialdates.analytics.Analytics;
 import com.alexstyl.specialdates.analytics.AnalyticsProvider;
 import com.alexstyl.specialdates.analytics.Screen;
 import com.alexstyl.specialdates.events.namedays.NamedayPreferences;
+import com.alexstyl.specialdates.main.DatePicketDialogFragment;
 import com.alexstyl.specialdates.search.SearchHintCreator;
 import com.alexstyl.specialdates.support.AskForSupport;
 import com.alexstyl.specialdates.theming.ThemingPreferences;
@@ -97,6 +100,9 @@ public class MainActivity extends ThemedActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_select_date:
+                showDatePicker();
+                break;
             case R.id.action_settings:
                 navigator.toSettings();
                 break;
@@ -108,6 +114,17 @@ public class MainActivity extends ThemedActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDatePicker() {
+        DatePicketDialogFragment datePicketDialogFragment = new DatePicketDialogFragment();
+        datePicketDialogFragment.setListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                navigator.toDateDetails(dayOfMonth, month + 1, year);
+            }
+        });
+        datePicketDialogFragment.show(getSupportFragmentManager(), "");
     }
 
     @Override

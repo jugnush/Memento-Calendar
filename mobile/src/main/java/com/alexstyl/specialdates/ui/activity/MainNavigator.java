@@ -10,6 +10,8 @@ import com.alexstyl.specialdates.about.AboutActivity;
 import com.alexstyl.specialdates.addevent.AddBirthdayActivity;
 import com.alexstyl.specialdates.analytics.Analytics;
 import com.alexstyl.specialdates.analytics.Screen;
+import com.alexstyl.specialdates.date.MonthInt;
+import com.alexstyl.specialdates.datedetails.DateDetailsActivity;
 import com.alexstyl.specialdates.search.SearchActivity;
 import com.alexstyl.specialdates.settings.MainPreferenceActivity;
 import com.alexstyl.specialdates.theming.AttributeExtractor;
@@ -83,4 +85,9 @@ public class MainNavigator {
             return simpleChromeCustomTabsIntentBuilder.withToolbarColor(toolbarColor);
         }
     };
+
+    void toDateDetails(int dayOfMonth, @MonthInt int month, int year) {
+        Intent dateDetails = DateDetailsActivity.getStartIntent(activity, dayOfMonth, month, year);
+        activity.startActivity(dateDetails);
+    }
 }

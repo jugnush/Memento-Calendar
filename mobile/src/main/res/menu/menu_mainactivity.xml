@@ -3,6 +3,12 @@
   xmlns:app="http://schemas.android.com/apk/res-auto/android">
 
   <item
+    android:id="@+id/action_select_date"
+    android:icon="@drawable/ic_action_select_date"
+    android:title="@string/main_select_date"
+    app:showAsAction="ifRoom" />
+
+  <item
     android:id="@+id/action_settings"
     android:title="@string/action_settings"
     app:showAsAction="never" />

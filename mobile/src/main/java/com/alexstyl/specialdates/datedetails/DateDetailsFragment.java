@@ -185,12 +185,6 @@ public class DateDetailsFragment extends MementoFragment implements LoaderManage
     };
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_upcoming_light, menu);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_date_events, container, false);
     }
