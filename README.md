@@ -9,9 +9,7 @@ You can get started by having a look at the project's wiki. It contains some inf
 
 This repo is open for PRs and they are more than welcome! Have a look at the wiki page to see how to contribute.
 
-
-
-![http://developer.android.com/images/brand/en_app_rgb_wo_60.png](https://play.google.com/store/apps/details?id=com.alexstyl.specialdates)
+[![alt text](http://developer.android.com/images/brand/en_app_rgb_wo_60.png "Download Memento Calendar from the Play Store")](https://play.google.com/store/apps/details?id=com.alexstyl.specialdates)
 
 ### License
 ```
