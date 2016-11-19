@@ -11,16 +11,16 @@ class ContactPersister {
     private final ContentResolver contentResolver;
     private final Context context;
 
-    public ContactPersister(Context context, ContentResolver contentResolver) {
+    ContactPersister(Context context, ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
         this.context = context;
     }
 
-    public void createContactWithNameAndBirthday(String contactName, Date birthday, AccountData account) {
-        new ContactWithBirthdayCreateTask(contactName, birthday, contentResolver, context, account).execute();
+    void createContactWithNameAndBirthday(String contactName, Date birthday, AccountData account) {
+        ContactWithEventCreateTask.createBirthday(contactName, birthday, contentResolver, context, account).execute();
     }
 
-    public void addBirthdayToExistingContact(Date birthday, Contact contact) {
+    void addBirthdayToExistingContact(Contact contact, Date birthday) {
         new AddBirthdayToContactTask(context, contentResolver, birthday, contact).execute();
     }
 }

@@ -39,7 +39,7 @@ public class BirthdayFormPresenter {
         updateAddButton();
     }
 
-    void updateAddButton() {
+    private void updateAddButton() {
         boolean validData = allDataAreValid();
         addButton.setEnabled(validData);
     }
@@ -64,20 +64,20 @@ public class BirthdayFormPresenter {
         return selectedContact != null;
     }
 
-    public void presentBirthday(Date birthday) {
+    void presentBirthday(Date birthday) {
         birthdayLabel.displayBirthday(birthday);
         updateAddButton();
     }
 
-    public boolean isPresentingNoStoredContact() {
+    boolean isPresentingNoStoredContact() {
         return selectedContact == null;
     }
 
-    public Contact getSelectedContact() {
+    Contact getSelectedContact() {
         return selectedContact;
     }
 
-    public Date getDisplayingBirthday() {
+    Date getDisplayingBirthday() {
         return birthdayLabel.getDisplayingBirthday();
     }
 }

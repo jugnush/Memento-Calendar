@@ -15,20 +15,34 @@ import com.alexstyl.specialdates.date.Date;
 
 import java.util.ArrayList;
 
-public class ContactWithBirthdayCreateTask extends AsyncTask<Void, Void, Boolean> {
+class ContactWithEventCreateTask extends AsyncTask<Void, Void, Boolean> {
+
+    private static final int NEW_CONTACT_ID = 0;
 
     private final String contactName;
     private final Date birthday;
     private final ContentResolver contentResolver;
     private final Context context;
     private final AccountData account;
+    private final int eventType;
 
-    public ContactWithBirthdayCreateTask(String contactName, Date birthday, ContentResolver contentResolver, Context context, AccountData account) {
+    static ContactWithEventCreateTask createBirthday(String contactName, Date birthday, ContentResolver contentResolver, Context context, AccountData account) {
+        int eventType = ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY;
+        return new ContactWithEventCreateTask(contactName, birthday, contentResolver, context, account, eventType);
+    }
+
+    private ContactWithEventCreateTask(String contactName, Date birthday,
+                                       ContentResolver contentResolver,
+                                       Context context,
+                                       AccountData account,
+                                       int eventType
+    ) {
         this.contactName = contactName;
         this.birthday = birthday;
         this.contentResolver = contentResolver;
         this.context = context;
         this.account = account;
+        this.eventType = eventType;
     }
 
     @Override
@@ -50,7 +64,7 @@ public class ContactWithBirthdayCreateTask extends AsyncTask<Void, Void, Boolean
                         .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contactName)
                         .build());
 
-        ops.add(insertBirthdayOperation(0));
+        ops.add(insertBirthdayOperation());
         try {
             contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
             return true;
@@ -60,11 +74,11 @@ public class ContactWithBirthdayCreateTask extends AsyncTask<Void, Void, Boolean
         }
     }
 
-    private ContentProviderOperation insertBirthdayOperation(int rawContactId) {
+    private ContentProviderOperation insertBirthdayOperation() {
         return ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, NEW_CONTACT_ID)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Event.TYPE, ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+                .withValue(ContactsContract.CommonDataKinds.Event.TYPE, eventType)
                 .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, birthday.toString())
                 .build();
     }

@@ -1,5 +1,7 @@
 package com.alexstyl.specialdates.addevent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +16,9 @@ import com.alexstyl.specialdates.analytics.Analytics;
 import com.alexstyl.specialdates.analytics.AnalyticsProvider;
 import com.alexstyl.specialdates.contact.Contact;
 import com.alexstyl.specialdates.date.Date;
+import com.alexstyl.specialdates.events.database.EventTypeId;
+import com.alexstyl.specialdates.events.peopleevents.EventType;
+import com.alexstyl.specialdates.events.peopleevents.StandardEventType;
 import com.alexstyl.specialdates.theming.MementoTheme;
 import com.alexstyl.specialdates.theming.Themer;
 import com.alexstyl.specialdates.ui.base.ThemedActivity;
@@ -22,13 +27,18 @@ import com.novoda.notils.meta.AndroidUtils;
 
 import java.util.ArrayList;
 
-public class AddBirthdayActivity extends ThemedActivity {
+import static com.alexstyl.specialdates.events.peopleevents.StandardEventType.BIRTHDAY;
+
+public class AddContactEventActivity extends ThemedActivity {
+
+    private static final String EXTRA_EVENT_TYPE = "event_type";
 
     private ContactHeroView contactHeroView;
     private BirthdayLabelView birthdayLabel;
     private BirthdayFormPresenter presenter;
     private Analytics analytics;
     private boolean eventCreated;
+    private EventType eventType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,27 +58,45 @@ public class AddBirthdayActivity extends ThemedActivity {
         addButton.setOnClickListener(onAddButtonClickListener);
         dismissButton.setOnClickListener(onDismissButtonClickListener);
 
+        eventType = getEventTypeFrom(getIntent());
         presenter = new BirthdayFormPresenter(contactHeroView, birthdayLabel, addButton);
 
         BirthdayPickerDialog.resetListenerToDialog(getSupportFragmentManager(), birthdaySelectedListener);
         addButton.setEnabled(false);
     }
 
+    private EventType getEventTypeFrom(Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras == null) {
+            return BIRTHDAY;
+        }
+        @EventTypeId int rawEventType = extras.getInt(EXTRA_EVENT_TYPE, BIRTHDAY.getId());
+        return StandardEventType.fromId(rawEventType);
+    }
+
     private final View.OnClickListener onAddButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ContactPersister contactPersister = new ContactPersister(context(), getContentResolver());
             if (presenter.isPresentingNoStoredContact()) {
                 // store contact
                 AccountData account = getAccountToStoreContact();
-                new ContactPersister(context(), getContentResolver())
+                String contactName = contactHeroView.getText().toString();
+                Date birthdaySelected = birthdayLabel.getDisplayingBirthday();
+                contactPersister
                         .createContactWithNameAndBirthday(
-                                contactHeroView.getText().toString(),
-                                birthdayLabel.getDisplayingBirthday(),
+                                contactName,
+                                birthdaySelected,
                                 account
                         );
             } else {
-                new ContactPersister(context(), getContentResolver())
-                        .addBirthdayToExistingContact(presenter.getDisplayingBirthday(), presenter.getSelectedContact());
+                Date selectedBirthday = presenter.getDisplayingBirthday();
+                Contact selectedContact = presenter.getSelectedContact();
+                contactPersister
+                        .addBirthdayToExistingContact(
+                                selectedContact,
+                                selectedBirthday
+                        );
             }
             finishSuccessfully();
         }
@@ -171,4 +199,9 @@ public class AddBirthdayActivity extends ThemedActivity {
         }
     };
 
+    public static Intent createAddBirthdayIntent(Activity activity) {
+        Intent intent = new Intent(activity, AddContactEventActivity.class);
+        intent.putExtra(EXTRA_EVENT_TYPE, BIRTHDAY);
+        return intent;
+    }
 }
